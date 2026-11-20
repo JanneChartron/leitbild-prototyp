@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leitbild – Prototyp</title>
+<style>
+  :root{
+    --ink:#16161d; --muted:#6b6b78; --line:#e6e4ee; --bg:#f4f3f8; --card:#ffffff;
+    --accent:#4b3fd8; --accent-soft:#ecebfd; --ok:#1f8a4c; --ok-soft:#e5f6ec; --bad:#c62f2f; --bad-soft:#fdeaea;
+    --warn:#a76a00; --warn-soft:#fff4dc;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .app{max-width:440px;margin:0 auto;min-height:100vh;background:var(--card);display:flex;flex-direction:column;box-shadow:0 0 0 1px var(--line)}
+  header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:8px;font-weight:700;letter-spacing:-.2px}
+  .logo{width:26px;height:26px;border-radius:7px;background:var(--accent);display:grid;place-items:center;color:#fff;font-size:14px;font-weight:800}
+  .ws{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .ws-dot{width:18px;height:18px;border-radius:50%;background:#0f5c4a;color:#fff;font-size:10px;display:grid;place-items:center;font-weight:700}
+  main{flex:1;padding:22px 18px 28px}
+  .screen{display:none;animation:fade .25s ease}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  h1{font-size:24px;margin:0 0 6px;letter-spacing:-.3px}
+  h2{font-size:19px;margin:0 0 6px}
+  p.sub{color:var(--muted);margin:0 0 18px;font-size:15px;line-height:1.4}
+  textarea{width:100%;min-height:118px;border:1.5px solid var(--line);border-radius:14px;padding:14px;font:inherit;font-size:16px;resize:none;outline:none}
+  textarea:focus{border-color:var(--accent)}
+  .label{font-size:13px;font-weight:600;color:var(--muted);margin:18px 0 8px}
+  .chips{display:flex;gap:8px}
+  .chip{border:1.5px solid var(--line);border-radius:999px;padding:8px 14px;font-size:14px;background:#fff;cursor:pointer}
+  .chip.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .btn{display:block;width:100%;border:0;border-radius:14px;padding:15px;font:inherit;font-size:16px;font-weight:600;cursor:pointer;margin-top:12px}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.primary:disabled{background:#c9c6ef;cursor:not-allowed}
+  .btn.ghost{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+  .btn.locked{background:#f1f0f5;color:#9a99a6;cursor:not-allowed}
+  .hint{font-size:12px;color:var(--muted);margin-top:8px}
+  .bubble{background:var(--accent-soft);border-radius:16px 16px 16px 4px;padding:14px 16px;margin-bottom:16px;font-size:15px;line-height:1.45}
+  .bubble b{color:var(--accent)}
+  .you{background:#f1f0f5;border-radius:16px 16px 4px 16px;padding:12px 14px;margin:0 0 14px auto;max-width:85%;font-size:14px;color:#3b3b48}
+  .products{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .product{border:1.5px solid var(--line);border-radius:16px;padding:12px;text-align:center;cursor:pointer;background:#fff}
+  .product:hover{border-color:var(--accent)}
+  .product svg{width:100%;height:auto;display:block;background:#f6f8f7;border-radius:10px}
+  .product .n{font-weight:700;margin-top:8px}
+  .product .d{font-size:12px;color:var(--muted)}
+  .steps{list-style:none;padding:0;margin:26px 0}
+  .steps li{display:flex;align-items:center;gap:12px;padding:12px 0;color:var(--muted);font-size:15px}
+  .steps li .st{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:13px}
+  .steps li.run{color:var(--ink)} .steps li.run .st{border-color:var(--accent);border-top-color:transparent;animation:spin .8s linear infinite}
+  .steps li.done{color:var(--ink)} .steps li.done .st{border-color:var(--ok);background:var(--ok);color:#fff}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .img{border-radius:16px;overflow:hidden;position:relative}
+  .img svg{display:block;width:100%;height:auto}
+  .score{display:flex;align-items:center;gap:14px;margin:16px 0 10px}
+  .ring{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:18px;flex:none}
+  .ring.bad{background:conic-gradient(var(--bad) 0 71%, var(--bad-soft) 71% 100%)}
+  .ring.ok{background:conic-gradient(var(--ok) 0 94%, var(--ok-soft) 94% 100%)}
+  .ring span{width:50px;height:50px;border-radius:50%;background:#fff;display:grid;place-items:center}
+  .verdict{font-weight:700;font-size:16px}
+  .verdict.bad{color:var(--bad)} .verdict.ok{color:var(--ok)}
+  .vsub{font-size:13px;color:var(--muted)}
+  .checks{list-style:none;padding:0;margin:6px 0 4px;border:1px solid var(--line);border-radius:14px}
+  .checks li{display:flex;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--line);font-size:14px}
+  .checks li:last-child{border-bottom:0}
+  .y{color:var(--ok);font-weight:700} .n{color:var(--bad);font-weight:700}
+  .fixing{display:flex;align-items:center;gap:10px;background:var(--warn-soft);color:var(--warn);border-radius:12px;padding:12px 14px;font-size:14px;margin-top:12px}
+  .fixing .st{width:18px;height:18px;border-radius:50%;border:2px solid var(--warn);border-top-color:transparent;animation:spin .8s linear infinite;flex:none}
+  .status{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:14px;padding:14px;margin:16px 0}
+  .avatar{width:38px;height:38px;border-radius:50%;background:#0f5c4a;color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
+  .status .t{font-weight:600}
+  .status .s{font-size:13px;color:var(--muted)}
+  .pill{margin-left:auto;font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px}
+  .pill.wait{background:var(--warn-soft);color:var(--warn)} .pill.ok{background:var(--ok-soft);color:var(--ok)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1}
+  .thumb{width:72px;border-radius:10px;overflow:hidden;flex:none}
+  .thumb svg{display:block;width:100%;height:auto}
+  .done-box{text-align:center;padding:30px 10px}
+  .done-box .big{width:72px;height:72px;border-radius:50%;background:var(--ok-soft);color:var(--ok);display:grid;place-items:center;font-size:34px;margin:0 auto 14px}
+  .reset{display:block;text-align:center;font-size:12px;color:#b4b3bf;margin:18px 0 0;cursor:pointer;background:none;border:0;width:100%}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand"><div class="logo">L</div>Leitbild</div>
+    <div class="ws"><div class="ws-dot">V</div>Velotto AG</div>
+  </header>
+  <main>
+
+    <!-- 1 Start -->
+    <section class="screen active" id="s1">
+      <h1>Hallo Lea</h1>
+      <p class="sub">Welches Bild brauchst du? Beschreib einfach deine Idee, um die Marke kümmert sich Leitbild.</p>
+      <textarea id="idea" placeholder="z. B. Familie macht Velotour im Herbstwald"></textarea>
+      <div class="label">Format</div>
+      <div class="chips" id="formats">
+        <button class="chip on" data-f="Instagram-Post">Instagram-Post</button>
+        <button class="chip" data-f="Story">Story</button>
+        <button class="chip" data-f="Banner">Banner</button>
+      </div>
+      <button class="btn primary" id="go" disabled>Bild erstellen</button>
+      <div class="hint">Regelwerk: Velotto Brand-Manual 2026 · aktiv</div>
+    </section>
+
+    <!-- 2 Nachfrage -->
+    <section class="screen" id="s2">
+      <div class="you" id="echo"></div>
+      <div class="bubble"><b>Kurze Rückfrage:</b> Velotto hat zwei E-Bikes im Sortiment. Welches soll auf dem Bild sein? Ich erfinde kein Produkt, sondern nutze eure echten Produktfotos.</div>
+      <div class="products">
+        <div class="product" data-p="City">
+          <svg viewBox="0 0 160 100"><g fill="none" stroke="#0f5c4a" stroke-width="5"><circle cx="40" cy="68" r="20"/><circle cx="120" cy="68" r="20"/><path d="M40 68 L70 68 L95 38 L60 38 Z M95 38 L120 68 M66 30 L58 38 M92 30 L104 30"/></g><rect x="66" y="44" width="16" height="10" rx="2" fill="#f28c28"/></svg>
+          <div class="n">Velotto City</div><div class="d">Pendler-E-Bike</div>
+        </div>
+        <div class="product" data-p="Trail">
+          <svg viewBox="0 0 160 100"><g fill="none" stroke="#0f5c4a" stroke-width="6"><circle cx="38" cy="66" r="22"/><circle cx="122" cy="66" r="22"/><path d="M38 66 L72 66 L98 34 L58 40 Z M98 34 L122 66 M62 30 L56 40 M90 26 L108 26"/></g><rect x="62" y="44" width="20" height="12" rx="2" fill="#f28c28"/></svg>
+          <div class="n">Velotto Trail</div><div class="d">Touren-E-Bike</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 Laden -->
+    <section class="screen" id="s3">
+      <h2>Dein Bild entsteht</h2>
+      <p class="sub">Leitbild arbeitet mit dem Velotto Brand-Manual.</p>
+      <ul class="steps" id="steps">
+        <li><span class="st"></span>Prompt mit euren Brand-Regeln schreiben</li>
+        <li><span class="st"></span>Bild mit echtem Produktfoto generieren</li>
+        <li><span class="st"></span>Brand-Check gegen die Checkliste</li>
+      </ul>
+    </section>
+
+    <!-- 4 Ergebnis 1 -->
+    <section class="screen" id="s4">
+      <div class="img" id="img1"></div>
+      <div class="score">
+        <div class="ring bad"><span>71%</span></div>
+        <div><div class="verdict bad">Brand-Check nicht bestanden</div><div class="vsub">Mindestens 85 % nötig</div></div>
+      </div>
+      <ul class="checks">
+        <li>Farben Velotto-Grün und Orange <span class="y">✓</span></li>
+        <li>Echtes Produkt (Velotto Trail) <span class="y">✓</span></li>
+        <li>Logo gut sichtbar <span class="n">✗ zu klein</span></li>
+        <li>Lichtstimmung warm und hell <span class="n">✗ zu kalt</span></li>
+      </ul>
+      <div class="fixing"><span class="st"></span>Ich verbessere das Bild automatisch …</div>
+    </section>
+
+    <!-- 5 Ergebnis 2 -->
+    <section class="screen" id="s5">
+      <div class="img" id="img2"></div>
+      <div class="score">
+        <div class="ring ok"><span>94%</span></div>
+        <div><div class="verdict ok">Brand-Check bestanden</div><div class="vsub">2. Versuch · automatisch verbessert</div></div>
+      </div>
+      <ul class="checks">
+        <li>Farben Velotto-Grün und Orange <span class="y">✓</span></li>
+        <li>Echtes Produkt (Velotto Trail) <span class="y">✓</span></li>
+        <li>Logo gut sichtbar <span class="y">✓</span></li>
+        <li>Lichtstimmung warm und hell <span class="y">✓</span></li>
+      </ul>
+      <button class="btn primary" id="toApproval">Zur Freigabe senden</button>
+      <div class="row">
+        <button class="btn ghost" id="regen">Neu generieren</button>
+        <button class="btn locked" id="exportLocked">🔒 Exportieren</button>
+      </div>
+      <div class="hint">Export ist erst nach der Freigabe durch das Brand-Team möglich.</div>
+    </section>
+
+    <!-- 6 Freigabe -->
+    <section class="screen" id="s6">
+      <h2>Freigabe</h2>
+      <p class="sub">Das Brand-Team prüft dein Bild, bevor es die Firma verlässt.</p>
+      <div class="status">
+        <div class="thumb" id="thumb"></div>
+        <div><div class="t">Frühlingsaktion</div><div class="s" id="aprText">Wartet auf Marco (Brand-Team)</div></div>
+        <span class="pill wait" id="aprPill">Ausstehend</span>
+      </div>
+      <div class="label">Exportieren als</div>
+      <div class="row">
+        <button class="btn locked" id="exPost" disabled>🔒 Post</button>
+        <button class="btn locked" id="exStory" disabled>🔒 Story</button>
+      </div>
+    </section>
+
+    <!-- 7 Fertig -->
+    <section class="screen" id="s7">
+      <div class="done-box">
+        <div class="big">✓</div>
+        <h2>Exportiert</h2>
+        <p class="sub" id="doneText">Dein Bild ist bereit zum Posten.</p>
+      </div>
+    </section>
+
+    <button class="reset" id="reset">Prototyp neu starten</button>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var $ = function(id){return document.getElementById(id)};
+  var state = {idea:"", format:"Instagram-Post", product:"Trail"};
+  var timers = [];
+  function later(fn,ms){timers.push(setTimeout(fn,ms))}
+  function clearTimers(){timers.forEach(clearTimeout);timers=[]}
+  function show(id){
+    document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
+    $(id).classList.add('active'); window.scrollTo(0,0);
+  }
+  function toast(t){var el=$('toast');el.textContent=t;el.classList.add('show');setTimeout(function(){el.classList.remove('show')},1800)}
+
+  function scene(warm, bigLogo){
+    var sky = warm ? ['#ffd9a8','#ffefd6'] : ['#9fb4c9','#d4dde6'];
+    var lake = warm ? '#7fb6c7' : '#5f7f99';
+    var hills = warm ? '#6f9a6a' : '#55705f';
+    var sun = warm ? '<circle cx="250" cy="70" r="26" fill="#fff3c4"/>' : '';
+    var logo = bigLogo
+      ? '<g transform="translate(14,14)"><rect width="104" height="30" rx="7" fill="#0f5c4a"/><text x="52" y="20" text-anchor="middle" font-family="Arial" font-weight="700" font-size="14" fill="#fff">velotto</text></g>'
+      : '<g transform="translate(14,14)"><rect width="40" height="12" rx="3" fill="#0f5c4a" opacity=".85"/><text x="20" y="9" text-anchor="middle" font-family="Arial" font-weight="700" font-size="6" fill="#fff">velotto</text></g>';
+    return '<svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">'+
+      '<defs><linearGradient id="sk'+(warm?1:0)+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+sky[0]+'"/><stop offset="1" stop-color="'+sky[1]+'"/></linearGradient></defs>'+
+      '<rect width="320" height="320" fill="url(#sk'+(warm?1:0)+')"/>'+sun+
+      '<path d="M0 150 L60 105 L110 140 L170 90 L230 135 L280 110 L320 130 L320 175 L0 175Z" fill="#b8c4cc" opacity=".8"/>'+
+      '<rect y="170" width="320" height="60" fill="'+lake+'"/>'+
+      '<path d="M0 222 Q80 205 160 220 T320 215 L320 320 L0 320Z" fill="'+hills+'"/>'+
+      '<rect y="250" width="320" height="10" fill="#d8c9a8"/>'+
+      '<g transform="translate(95,175)">'+
+        '<g fill="none" stroke="#1d2b2a" stroke-width="5"><circle cx="20" cy="70" r="22"/><circle cx="110" cy="70" r="22"/></g>'+
+        '<g fill="none" stroke="#0f5c4a" stroke-width="6" stroke-linejoin="round"><path d="M20 70 L55 70 L82 38 L42 42 Z M82 38 L110 70 M46 32 L40 42 M76 28 L92 28"/></g>'+
+        '<rect x="46" y="46" width="20" height="12" rx="2" fill="#f28c28"/>'+
+        '<path d="M47 30 L58 -8 L72 -6 L80 26" fill="#f28c28"/>'+
+        '<circle cx="64" cy="-18" r="10" fill="#e9b48f"/>'+
+        '<path d="M54 -24 Q64 -36 76 -22 L78 -10 Q70 -20 58 -16Z" fill="#6b3e26"/>'+
+        '<path d="M58 0 L80 26 M66 26 L56 40 L58 64" stroke="#2d3a55" stroke-width="7" fill="none" stroke-linecap="round"/>'+
+      '</g>'+
+      (warm?'':'<rect width="320" height="320" fill="#3a5878" opacity=".12"/>')+
+      logo+'</svg>';
+  }
+  $('img1').innerHTML = scene(false,false);
+  $('img2').innerHTML = scene(true,true);
+  $('thumb').innerHTML = scene(true,true);
+
+  // Screen 1
+  $('idea').addEventListener('input', function(){ $('go').disabled = this.value.trim().length < 3; });
+  document.querySelectorAll('#formats .chip').forEach(function(c){
+    c.addEventListener('click', function(){
+      document.querySelectorAll('#formats .chip').forEach(function(x){x.classList.remove('on')});
+      c.classList.add('on'); state.format = c.dataset.f;
+    });
+  });
+  $('go').addEventListener('click', function(){
+    state.idea = $('idea').value.trim();
+    $('echo').textContent = state.idea + ' · ' + state.format;
+    show('s2');
+  });
+
+  // Screen 2
+  document.querySelectorAll('.product').forEach(function(p){
+    p.addEventListener('click', function(){ state.product = p.dataset.p; runLoading(); });
+  });
+
+  function runLoading(){
+    show('s3');
+    var lis = document.querySelectorAll('#steps li');
+    lis.forEach(function(li){li.className=''; li.querySelector('.st').textContent='';});
+    [0,1,2].forEach(function(i){
+      later(function(){ lis[i].className='run'; }, i*1100);
+      later(function(){ lis[i].className='done'; lis[i].querySelector('.st').textContent='✓'; }, i*1100+1000);
+    });
+    later(function(){ show('s4'); later(function(){ show('s5'); }, 3200); }, 3500);
+  }
+
+  // Screen 5
+  $('regen').addEventListener('click', function(){ runLoading(); });
+  $('exportLocked').addEventListener('click', function(){ toast('Erst nach der Freigabe durch das Brand-Team'); });
+  $('toApproval').addEventListener('click', function(){
+    show('s6');
+    later(function(){
+      $('aprText').textContent = 'Marco hat das Bild freigegeben';
+      var p=$('aprPill'); p.className='pill ok'; p.textContent='Freigegeben';
+      ['exPost','exStory'].forEach(function(id){ var b=$(id); b.disabled=false; b.className='btn primary'; b.textContent=b.textContent.replace('🔒 ',''); });
+      toast('Marco hat dein Bild freigegeben');
+    }, 4000);
+  });
+  function exp(kind){ $('doneText').textContent = 'Dein Bild ist als ' + kind + ' bereit zum Posten.'; show('s7'); }
+  $('exPost').addEventListener('click', function(){ if(!this.disabled) exp('Post'); });
+  $('exStory').addEventListener('click', function(){ if(!this.disabled) exp('Story'); });
+
+  // Reset
+  $('reset').addEventListener('click', function(){
+    clearTimers();
+    $('idea').value=''; $('go').disabled=true;
+    $('aprText').textContent='Wartet auf Marco (Brand-Team)';
+    var p=$('aprPill'); p.className='pill wait'; p.textContent='Ausstehend';
+    [['exPost','Post'],['exStory','Story']].forEach(function(a){ var b=$(a[0]); b.disabled=true; b.className='btn locked'; b.textContent='🔒 '+a[1]; });
+    show('s1');
+  });
+})();
+</script>
+</body>
+</html>
